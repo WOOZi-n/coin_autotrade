@@ -1,21 +1,14 @@
 import pybithumb
 
-def bull_market(ticker):
-    data = pybithumb.get_ohlcv(ticker)
-    price = pybithumb.get_current_price(ticker)
-    ma5 = data['close'].rolling(5).mean()
-    last_ma5 = ma5[-2]
+con_key = "e628e625d8c195f0529772e8f30998e2"
+sec_key = "ab4295abd375e31e60d3d38453354236"
 
-    if last_ma5 < price:
-        return True
-    else:
-        return False
+bithumb = pybithumb.Bithumb(con_key, sec_key)
 
-
-tickers = pybithumb.get_tickers()
-for ticker in tickers:
-    is_bull = bull_market(ticker)
-    if is_bull:
-        print(ticker,"상승장")
-    else:
-        print(ticker,"하락장")
+krw = bithumb.get_balance("BTC")[2]
+orderbook = bithumb.get_orderbook("BTC")
+asks = orderbook["asks"]
+sell_price = asks[0]['price']
+unit = krw/float(sell_price)
+order = bithumb.buy_market_order("BTC", unit)
+print(order)
